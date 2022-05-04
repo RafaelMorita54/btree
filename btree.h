@@ -7,6 +7,8 @@
 #include <stdlib.h>
 #include <string.h>
 #include <stdbool.h>
+#include <utils.h>
+#include <btree.h>
 
 // CONSTANTS --------------------------------------------------------------------------------------------------------
 
@@ -15,6 +17,7 @@
 #define MAXKEYS 204
 #define AUX_FIELDS_SIZE_ON_PAGE (2+1) // number of keys INT and ”isLeaf" BOOL
 #define FREE_SPACE_ON_PAGE (PAGESIZE - ((MAXKEYS*4) +(MAXKEYS*8)+((MAXKEYS+1)*8)+3))
+
 #define BUF 200
 #define RRN 158
 #define DELIMITERCHAR ','
@@ -47,12 +50,29 @@ typedef struct promotedkey {
     long lChilds[2];
 } promotedKey;
 
+typedef struct PrimaryIndex {
+} PrimaryIndex;
+
 // FUNCTIONS ---------------------------------------------------------------------------------------------------------
 
+page_t *readPageFromFile(FILE *p_file)
+Errors writePageIntoFile(long lRRN, page_t *page, FILE *p_file); 
+page_t *getPage(long lRRN, FILE *p_file);
+long getTreeHeader(FILE *p_file);
+void writeTreeHeader(FILE *p_file, long rootRRN);
+page_t *createTree(FILE *p_file);
+page_t *getOrCreateRoot(FILE *p_file);
+promotedKey *insertIntoNode(page_t *page, promotedKey *newKey, FILE *p_file);
+page_t *searchPositionOnPageAndInsert(page_t *page, promotedKey *newKey);
+page_t *splitAndCreateNewNode(page_t **page);
+promotedKey *extractpromotedKey(page_t *page);
+promotedKey *_split(page_t *page,FILE *p_file, promotedKey *newKey);
+page_t *createNodeWithPromotedKey(promotedKey *promoKey);
+Errors setNodeAsRoot(page_t *page, FILE *p_file);
+promotedKey *_bTreeInsert(page_t *node, promotedKey *key, FILE *p_file);
+Errors bTreeInsert(PrimaryIndex *newRecord, page_t *root, FILE *p_file);
+long bTreeSelect(page_t *node, int key, FILE *p_file);
 
-page_t *getOrCreateRoot (FILE *p_file);
-page_t *getRoot (FILE *p_file);
-long bTreeSelect (page_t *page, int number, FILE *p_file);
 record_t binSearch_Btree (FILE *p_file, long lKey);
 
 int binFileSize (FILE *p_file);
