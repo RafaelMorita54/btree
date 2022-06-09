@@ -1,6 +1,6 @@
 #include "btree.c"
 
-int main () {
+int main (void) {
 
     FILE  *p_database, *p_btree;
 
@@ -17,39 +17,50 @@ int main () {
     }
 
     char input[50];
+    int iNumberOfStudents = 0;
+    int *iNumberOfPages = 0;
 
     while (strcmp(input, "exit") != 0) {
         scanf("%s", input); // Leitura da próxima operação
-
         if (strcmp(input, "insert") == 0) { //Insert
 
             student_t student;
             record_t record;
 
             student = csvRead_Student (stdin);
-            record = binSearch_Btree (p_btree, student.lKey);
+            record = binSearch_Btree (p_btree, student.iKey);
             
-            if (record.lKey == student.lKey) {
+            if (record.iKey == student.iKey) {
                 printf("O registro ja existe!\n");
             } else {
-                // Write Record in Btree
+                // Write student into database
+                record.iKey = student.iKey;
+                record.lRRN = iNumberOfStudents*(sizeof(student_t));
+                fseek(p_database, record.lRRN, SEEK_SET);
                 binWrite_Student (student, p_database);
+                iNumberOfStudents++;
+                // Write Record in Btree
+                page_t *root = getOrCreateRoot(p_btree);
+                PrimaryIndex *primaryKey;
+                primaryKey->iIndexKey = record.iKey;
+                primaryKey->lIndexRRN = record.lRRN;
+                bTreeInsert(primaryKey, root, p_btree, iNumberOfPages);
             }
-        };
+        }
 
         if (strcmp(input, "search") == 0) { //Search
 
             student_t student;
             record_t record;
-            long searchKey;
+            int searchKey;
 
-            scanf("%li", &searchKey);
+            scanf("%d", &searchKey);
             record = binSearch_Btree (p_btree, searchKey);
             
-            if (record.lKey == 0) {
+            if (record.lRRN == -1) {
                 printf("Registro nao encontrado!\n");
             } else {
-                student = getStudentByKey(p_database, record.lKey);
+                student = getStudentByRRN(p_database, record.lRRN);
                 print_Student(student);
             }
         }
@@ -60,11 +71,12 @@ int main () {
             record_t record;
 
             student = csvRead_Student (stdin);
-            record = binSearch_Btree (p_btree, student.lKey);
+            record = binSearch_Btree (p_btree, student.iKey);
             
-            if (record.lKey == 0) {
+            if (record.lRRN == -1) {
                 printf("Registro nao encontrado!\n");
             } else {
+                fseek(p_database, record.lRRN, SEEK_SET);
                 binWrite_Student (student, p_database);
             }
         }
