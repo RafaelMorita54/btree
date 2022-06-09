@@ -5,7 +5,7 @@
 /*Retrives page from file pointer*/
 page_t *readPageFromFile(FILE *p_file){
     //Aloca espaço para carregar página
-    page_t *page;
+    page_t *page = malloc(sizeof(page_t));
     //Lê dados da página do arquivo
     fread(&page->lPageRRN, sizeof(long), 1, p_file);
     for(int i=0; i<21; i++){
@@ -66,7 +66,7 @@ page_t *getPage(long lRRN, FILE *p_file){
     //Recupera uma página baseado no RRN
     fseek(p_file, lRRN, SEEK_SET);
     //Procura e carrega seus dados
-    return (readPageFromFile(p_file));
+    return  (readPageFromFile(p_file));
 }
 
 /*Get root RRN from header*/
@@ -104,7 +104,7 @@ void addTo_nPages(FILE *p_file){
 
 page_t *createTree(FILE *p_file){
     //Aloca espaço pra raiz
-    page_t *page;
+    page_t *page = malloc(sizeof(page_t));
     *page = new_Page(*page);
     //Inicializa os valores
     //Escreve a raiz no cabeçalho
@@ -172,7 +172,7 @@ page_t *splitAndCreateNewNode(page_t *page){
     //Encontra a posição do meio das chaves
     //posicao 10 como tamanho e 20
     //Cria espaço pra nova página
-    page_t *newPage;
+    page_t *newPage = malloc(sizeof(page_t));
     *newPage = new_Page(*newPage);
     record_t recordClean;
     recordClean = newRecord(recordClean);
@@ -201,7 +201,7 @@ page_t *splitAndCreateNewNode(page_t *page){
 /*Extract a promoted key from page*/
 promotedKey *extractpromotedKey(page_t *page){
     //Aloca espaço pra chave
-    promotedKey *extractedKey;
+    promotedKey *extractedKey = malloc(sizeof(promotedKey));
     *extractedKey = new_PromoKey(*extractedKey);
     //Tira ela da página
     extractedKey->iKey = page->records[10].iKey;
@@ -229,7 +229,7 @@ promotedKey *extractpromotedKey(page_t *page){
 page_t *createNodeWithPromotedKey(promotedKey *promoKey){
     //Se promoção cria estrutura para nova raiz,
     //Aloca espaço para ela
-    page_t *newPage;
+    page_t *newPage = malloc(sizeof(page_t));
     *newPage = new_Page(*newPage);
     newPage->records[0].iKey = promoKey->iKey;
     newPage->records[0].lRRN = promoKey->lRRN;
@@ -268,7 +268,7 @@ promotedKey *_bTreeInsert(page_t *node, promotedKey *key, FILE *p_file){
             return key;
         }
         else{
-            promotedKey *clearKey;
+            promotedKey *clearKey = malloc(sizeof(promotedKey));
             *clearKey = new_PromoKey(*clearKey);
             return clearKey;
         }
@@ -296,7 +296,7 @@ promotedKey *_bTreeInsert(page_t *node, promotedKey *key, FILE *p_file){
 void bTreeInsert(PrimaryIndex *newRecord, page_t *root, FILE *p_file, int *iNumberOfPages){
     //Função mais abstrata de inserção
     //Prepara os dados da nova chave
-    promotedKey *newKey;
+    promotedKey *newKey = malloc(sizeof(promotedKey));
     *newKey = new_PromoKey(*newKey);
     newKey->iKey = newRecord->iIndexKey;
     newKey->lRRN = newRecord->lIndexRRN;

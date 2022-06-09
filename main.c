@@ -1,4 +1,4 @@
-#include "btree.c"
+#include "btree.h"
 
 int main (void) {
 
@@ -41,7 +41,7 @@ int main (void) {
                 iNumberOfStudents++;
                 // Write Record in Btree
                 page_t *root = getOrCreateRoot(p_btree);
-                PrimaryIndex *primaryKey;
+                PrimaryIndex *primaryKey = malloc(sizeof(PrimaryIndex));
                 primaryKey->iIndexKey = record.iKey;
                 primaryKey->lIndexRRN = record.lRRN;
                 bTreeInsert(primaryKey, root, p_btree, iNumberOfPages);
