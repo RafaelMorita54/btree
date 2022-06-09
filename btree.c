@@ -262,12 +262,14 @@ promotedKey *_bTreeInsert(page_t *node, promotedKey *key, FILE *p_file){
         //Caso a inserção crie uma promoção, precisa retornar a chave promovida para a recursão
         if(node->sNumberOfKeys==21){
             page_t *newPage = splitAndCreateNewNode(node);
-            writeNewPageIntoFile(newPage, p_file);
             key = extractpromotedKey(node);
+            writeNewPageIntoFile(node, p_file);
+            writeNewPageIntoFile(newPage, p_file);
             key->lChilds[1] = newPage->lPageRRN;
             return key;
         }
         else{
+            writePageIntoFile(node->lPageRRN, node, p_file);
             promotedKey *clearKey = malloc(sizeof(promotedKey));
             *clearKey = new_PromoKey(*clearKey);
             return clearKey;
@@ -306,6 +308,7 @@ void bTreeInsert(PrimaryIndex *newRecord, page_t *root, FILE *p_file, int *iNumb
     if(newKey->iKey != 0){
         //Chama as funções pra criar nova raiz e atualizar o cabeçalho
         page_t *newPage = createNodeWithPromotedKey(newKey);
+        writeNewPageIntoFile(newPage, p_file);
         setNodeAsRoot(newPage, p_file);
     }
     //senao foi inserida na raiz

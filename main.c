@@ -20,6 +20,7 @@ int main (void) {
     int iNumberOfStudents = 0;
     int *iNumberOfPages = 0;
 
+
     while (strcmp(input, "exit") != 0) {
         scanf("%s", input); // Leitura da próxima operação
         if (strcmp(input, "insert") == 0) { //Insert
@@ -30,7 +31,7 @@ int main (void) {
             student = csvRead_Student (stdin);
             record = binSearch_Btree (p_btree, student.iKey);
             
-            if (record.iKey == student.iKey) {
+            if (record.lRRN != -1) {
                 printf("O registro ja existe!\n");
             } else {
                 // Write student into database
@@ -57,7 +58,7 @@ int main (void) {
             scanf("%d", &searchKey);
             record = binSearch_Btree (p_btree, searchKey);
             
-            if (record.lRRN == -1) {
+            if (record.lRRN == -1 || p_btree == NULL) {
                 printf("Registro nao encontrado!\n");
             } else {
                 student = getStudentByRRN(p_database, record.lRRN);
