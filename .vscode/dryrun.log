@@ -1,0 +1,5 @@
+make --dry-run --always-make --keep-going --print-directory
+make: Entering directory '/home/rafaeljunmorita/btree'
+gcc -o main.run *.c -Wall -I .
+make: Leaving directory '/home/rafaeljunmorita/btree'
+ 

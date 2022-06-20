@@ -12,14 +12,14 @@
 
 // CONSTANTS --------------------------------------------------------------------------------------------------------
 
-#define PAGESIZE 4096
-#define TREE_HEADER PAGESIZE
-#define MAXKEYS 204
-#define AUX_FIELDS_SIZE_ON_PAGE (2+1) // number of keys INT and ”isLeaf" BOOL
-#define FREE_SPACE_ON_PAGE (PAGESIZE - ((MAXKEYS*4) +(MAXKEYS*8)+((MAXKEYS+1)*8)+3))
+// #define PAGESIZE 4096
+// #define TREE_HEADER PAGESIZE
+// #define MAXKEYS 204
+// #define AUX_FIELDS_SIZE_ON_PAGE (2+1) // number of keys INT and ”isLeaf" BOOL
+// #define FREE_SPACE_ON_PAGE (PAGESIZE - ((MAXKEYS*4) +(MAXKEYS*8)+((MAXKEYS+1)*8)+3))
 
-#define BUF 200
-#define RRN 158
+// #define BUF 200
+#define RRN 50
 #define DELIMITERCHAR ','
 
 // TYPEDEFS ---------------------------------------------------------------------------------------------------------
@@ -39,8 +39,8 @@ typedef struct record_t {
 
 typedef struct page_t {
     long lPageRRN;
-    record_t records[21];
-    long lChilds[22];
+    record_t records[101];
+    long lChilds[102];
     short sNumberOfKeys;
     bool isLeaf;
 } page_t;
@@ -58,32 +58,29 @@ typedef struct PrimaryIndex {
 
 // FUNCTIONS ---------------------------------------------------------------------------------------------------------
 
-page_t *readPageFromFile(FILE *p_file);
-void writePageIntoFile(long lRRN, page_t *page, FILE *p_file); 
-page_t *getPage(long lRRN, FILE *p_file);
+void writePageIntoFile(long lRRN, page_t *page, FILE *p_file);
+void writeNewPageIntoFile(page_t *newPage, FILE *p_file);
+void writeTreeHeader(FILE *p_file, long rootRRN, int iNumberOfPages);
+void bTreeInsert(PrimaryIndex inputKey, page_t *root, FILE *p_file);
+void setNodeAsRoot(page_t *page, FILE *p_file);
+void addTo_nPages(FILE *p_file);
 int getNumberOfPages(FILE *p_file);
 long getTreeHeader(FILE *p_file);
-void writeTreeHeader(FILE *p_file, long rootRRN, int iNumberOfPages);
+long bTreeSelect(page_t *node, int iKey, FILE *p_file);
+record_t binSearch_Btree (FILE *p_file, int iKey);
+record_t newRecord(record_t record);
+promotedKey *_bTreeInsert(page_t *node, promotedKey *key, FILE *p_file);
+promotedKey *insertAndReturnsPromotedKeyIfNeeded(page_t *page, promotedKey *key, FILE *p_file);
+promotedKey *extractpromotedKey(page_t *page);
+promotedKey *new_PromoKey(promotedKey *promoKey);
+page_t *new_Page(page_t *page);
+page_t *readPageFromFile(FILE *p_file);
+page_t *getPage(long lRRN, FILE *p_file);
 page_t *createTree(FILE *p_file);
 page_t *getOrCreateRoot(FILE *p_file);
-//promotedKey *insertIntoNode(page_t *page, promotedKey *newKey, FILE *p_file);
 page_t *searchPositionOnPageAndInsert(page_t *page, promotedKey *newKey);
 page_t *splitAndCreateNewNode(page_t *page);
-promotedKey *extractpromotedKey(page_t *page);
-//promotedKey *_split(page_t *page,FILE *p_file, promotedKey *newKey);
 page_t *createNodeWithPromotedKey(promotedKey *promoKey);
-void setNodeAsRoot(page_t *page, FILE *p_file);
-promotedKey *_bTreeInsert(page_t *node, promotedKey *key, FILE *p_file);
-void bTreeInsert(PrimaryIndex *newRecord, page_t *root, FILE *p_file, int *iNumberOfPages);
-long bTreeSelect(page_t *node, int key, FILE *p_file);
-void writeNewPageIntoFile(page_t *newPage, FILE *p_file);
-void addTo_nPages(FILE *p_file);
-void writePage(page_t page, FILE *p_file, long lRRN);
-record_t newRecord(record_t record);
-page_t new_Page(page_t page);
-promotedKey new_PromoKey(promotedKey promoKey);
-
-record_t binSearch_Btree (FILE *p_file, int iKey);
 
 int binFileSize (FILE *p_file);
 int csvFileSize (FILE *p_file);

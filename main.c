@@ -18,7 +18,6 @@ int main (void) {
 
     char input[50];
     int iNumberOfStudents = 0;
-    int *iNumberOfPages = 0;
 
 
     while (strcmp(input, "exit") != 0) {
@@ -42,10 +41,10 @@ int main (void) {
                 iNumberOfStudents++;
                 // Write Record in Btree
                 page_t *root = getOrCreateRoot(p_btree);
-                PrimaryIndex *primaryKey = malloc(sizeof(PrimaryIndex));
-                primaryKey->iIndexKey = record.iKey;
-                primaryKey->lIndexRRN = record.lRRN;
-                bTreeInsert(primaryKey, root, p_btree, iNumberOfPages);
+                PrimaryIndex inputKey;
+                inputKey.iIndexKey = record.iKey;
+                inputKey.lIndexRRN = record.lRRN;
+                bTreeInsert(inputKey, root, p_btree);
             }
         }
 
